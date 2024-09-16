@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations is power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        #info-box h1 {
+
+            font-size: 10px;
+            font-weight: 400;
+            color: rgba(1, 19, 1, 0.632);
+            background: lightblue;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class=" w-60 md:w-96 m-auto">
+        <h1 class="text-center text-xl md:text-5xl my-10  font-bold text-green-400">Data is power</h1>
+        <div class="border  border-orange-200 flex justify-between items-center rounded-3xl p-1">
+            <div>
+                <input class=" outline-none px-2 py-1 " type="text " id="infomationcollactor"
+                    placeholder="Enter your name">
+            </div>
+            <i id="submit" class="fa-solid fa-plus bg-gray-100 rounded-full px-5 py-2"></i>
+        </div>
+
+        <div class="border bg-lime-50 border-orange-200 px-2 py-5 h-fit rounded-lg shadow my-14">
+            <h1 class="text-center text-lg text-gray-500 font-bold">Database</h1>
+            <div id="info-box">
+
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFe1X_uIusYWQbulES2l6cJFbyMqs5diE",
+            authDomain: "hello-users-eceb9.firebaseapp.com",
+            projectId: "hello-users-eceb9",
+            storageBucket: "hello-users-eceb9.appspot.com",
+            messagingSenderId: "445480851578",
+            appId: "1:445480851578:web:b4bb002dade5c3b25a43c3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const firebaseDDMS = getFirestore(app);
+        document.getElementById('submit').addEventListener('click', async function (event) {
+            event.preventDefault()
+            const data = document.getElementById('infomationcollactor').value;
+            try {
+                await addDoc(collection(firebaseDDMS, "informations"), {
+                    info: data
+                });
+                alert("wow ! done")
+            } catch (error) {
+                alert("somting wrong");
+            }
+        })
+
+
+        async function showData() {
+            const words = [
+                'good 😊', 'great 👍', 'excellent 🌟', 'fantastic 🎉', 'wonderful 😍', 'superb 👏', 'amazing 🤩', 'brilliant 💡',
+                'awesome 🤘', 'outstanding 🏆', 'fine👌', 'positive ✨', 'beneficial 🌱', 'remarkable 🌠', 'admirable 🌟',
+                'pleasing 😊', 'favorable ☀️', 'superior 🚀', 'top-notch 🌟', 'first-rate 🥇', 'high-quality ⭐'
+            ];
+
+          
+
+
+            try {
+                const myDataWithDataBase = await getDocs(collection(firebaseDDMS, "informations"));
+                const setData = document.getElementById('info-box');
+
+                const dataDocuments = myDataWithDataBase.docs;
+
+                for (let i = 0; i < dataDocuments.length; i++) {
+                    const elementsEndex = Math.floor(Math.random() * words.length);
+                    const arrayElements = words[elementsEndex];
+                    let myInfo = dataDocuments[i].data();
+                    let newElement = document.createElement('h1');
+                    newElement.innerText = "Hello " + myInfo.info + ' you are a ' + arrayElements + " parson";
+                    setData.appendChild(newElement);
+                }
+            } catch (error) {
+                console.log("error = ", error)
+            }
+        }
+        showData()
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
