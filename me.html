@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations is power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        #info-box h1 {
+            font-size: 10px;
+            font-weight: 400;
+            color: rgba(1, 19, 1, 0.632);
+            background: lightblue;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        #submit:hover {
+            background: lightblue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="w-full md:w-96 mx-4 md:m-auto">
+        <h1 class="text-center text-xl md:text-5xl my-10 font-bold text-blue-400">Controle panal</h1>
+       
+        <div class="border bg-blue-50 border-orange-200 px-2 py-5 h-fit rounded-lg shadow my-14">
+            <h1 class="text-center text-lg text-gray-500 font-bold">Database</h1>
+            <div id="info-box"></div>
+        </div>
+
+        <button id="delete-all" class="bg-red-500 w-full m-auto text-white px-4 py-2 rounded">Delete All</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFe1X_uIusYWQbulES2l6cJFbyMqs5diE",
+            authDomain: "hello-users-eceb9.firebaseapp.com",
+            projectId: "hello-users-eceb9",
+            storageBucket: "hello-users-eceb9.appspot.com",
+            messagingSenderId: "445480851578",
+            appId: "1:445480851578:web:b4bb002dade5c3b25a43c3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const firebaseDDMS = getFirestore(app);
+
+        async function showData() {
+            const words = [
+                'good 😊', 'great 👍', 'excellent 🌟', 'fantastic 🎉', 'wonderful 😍', 'superb 👏', 'amazing 🤩', 'brilliant 💡',
+                'awesome 🤘', 'outstanding 🏆', 'fine👌', 'positive ✨', 'beneficial 🌱', 'remarkable 🌠', 'admirable 🌟',
+                'pleasing 😊', 'favorable ☀️', 'superior 🚀', 'top-notch 🌟', 'first-rate 🥇', 'high-quality ⭐'
+            ];
+
+            try {
+                const querySnapshot = await getDocs(collection(firebaseDDMS, "informations"));
+                const infoBox = document.getElementById('info-box');
+                infoBox.innerHTML = ''; // Clear previous data
+
+                querySnapshot.forEach((docSnapshot) => {
+                    const elementsEndex = Math.floor(Math.random() * words.length);
+                    const arrayElements = words[elementsEndex];
+                    const myInfo = docSnapshot.data();
+                    const newElement = document.createElement('h1');
+                    newElement.innerText = `Hello ${myInfo.info}, you are a ${arrayElements} person`;
+                    infoBox.appendChild(newElement);
+                });
+            } catch (error) {
+                console.log("Error = ", error);
+            }
+        }
+
+        async function deleteCollection() {
+            const batch = writeBatch(firebaseDDMS);
+            const querySnapshot = await getDocs(collection(firebaseDDMS, "informations"));
+            querySnapshot.forEach((docSnapshot) => {
+                batch.delete(doc(firebaseDDMS, "informations", docSnapshot.id));
+            });
+
+            await batch.commit();
+            console.log("All documents deleted");
+            showData(); // Refresh the data display
+        }
+
+        document.getElementById('delete-all').addEventListener('click', deleteCollection);
+
+        showData(); // Show data on page load
+    </script>
+</body>
+
+</html>
